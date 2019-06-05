@@ -18,6 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 /**
  * The default implementation of {@link CookieSerializer}.
  *
@@ -26,9 +29,8 @@ import org.apache.commons.logging.LogFactory;
  * @author Eddú Meléndez
  * @since 1.1
  */
+@Slf4j
 public class DefaultCookieSerializer implements CookieSerializer {
-
-	private static final Log logger = LogFactory.getLog(DefaultCookieSerializer.class);
 
 	private static final BitSet domainValid = new BitSet(128);
 
@@ -145,7 +147,9 @@ public class DefaultCookieSerializer implements CookieSerializer {
 			sb.append("; SameSite=").append(this.sameSite);
 		}
 
-		response.addHeader("Set-Cookie", sb.toString());
+		String cookie = sb.toString();
+		response.addHeader("Set-Cookie", cookie);
+		log.debug("Set-Cookie {}", cookie);
 	}
 
 	/**
@@ -160,7 +164,7 @@ public class DefaultCookieSerializer implements CookieSerializer {
 			return new String(decodedCookieBytes);
 		}
 		catch (Exception ex) {
-			logger.debug("Unable to Base64 decode value: " + base64Value);
+			log.debug("Unable to Base64 decode value: " + base64Value);
 			return null;
 		}
 	}
